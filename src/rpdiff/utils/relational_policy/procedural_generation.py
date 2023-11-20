@@ -17,15 +17,6 @@ from rpdiff.utils.mesh_util import three_util
 from typing import List, Union, Tuple
 from meshcat import Visualizer
 
-def interpolate_point_clouds(point_cloud1, point_cloud2, num_interpolations):
-    """Interpolate between two point clouds."""
-    intermediate_point_clouds = []
-    for i in range(num_interpolations):
-        alpha = i / (num_interpolations - 1)  # Interpolation parameter between 0 and 1
-        interpolated_cloud = (1 - alpha) * point_cloud1 + alpha * point_cloud2
-        intermediate_point_clouds.append(interpolated_cloud)
-    return intermediate_point_clouds
-
 class ProcGenRelations:
     def __init__(self, task_name: str, parent_class: str, child_class: str, upright_dict: dict, mc_vis: Visualizer):
         self.valid_task_names = [
@@ -565,6 +556,7 @@ class ProcGenRelations:
         num_intermediate_frames = 10  # You can adjust this
         intermediate_frames = []
         intermediate_meshes = []
+        intermediate_pcds = []
         child_rotation = R.from_quat(np.array(child_pose)[3:])
         final_mug_pose_arr = np.array([final_mug_pose.pose.position.x, final_mug_pose.pose.position.y, final_mug_pose.pose.position.z, final_mug_pose.pose.orientation.x, final_mug_pose.pose.orientation.y, final_mug_pose.pose.orientation.z, final_mug_pose.pose.orientation.w])
         final_mug_rotation = R.from_quat(final_mug_pose_arr[3:])
@@ -586,6 +578,8 @@ class ProcGenRelations:
 
             # Apply the intermediate pose to the child mesh
             intermediate_tmesh = child_tmesh_origin.copy().apply_transform(intermediate_pose_mat)
+            intermediate_point_cloud = intermediate_tmesh.sample(5000)
+            intermediate_pcds.append(intermediate_point_cloud)
             intermediate_meshes.append(intermediate_tmesh)
 
         if viz:
@@ -730,6 +724,7 @@ class ProcGenRelations:
         out_dict = {}
         out_dict['rel_trans'] = rel_trans
         out_dict['parent_idx'] = parent_idx
+        out_dict['intermediate_pcds'] = intermediate_pcds
 
         part_poses = dict(
             parent_part_world=handle_peg_pose,
