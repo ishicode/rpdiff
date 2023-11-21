@@ -1245,12 +1245,14 @@ class FullRelationPointcloudPolicyDataset(Dataset):
             success=success)
         
         return success_mi, success_gt
+    
+    #add intermediate_pcds to aug_save_dict in object_scene_procgen_demos
 
     def get_diff_pose_input_gt(self, data: dict, 
-                               parent_final_pcd: np.ndarray, child_final_pcd: np.ndarray, intermediate_pcds: np.ndarray) -> Tuple[dict]:
+                               parent_final_pcd: np.ndarray, child_final_pcd: np.ndarray) -> Tuple[dict]:
         
         mc_load_name = 'scene/dataio/pose_diff'
-
+        intermediate_pcds = data['intermediate_pcds']
         # get pose args
         pose_args = self.data_args.refine_pose
 
@@ -1652,7 +1654,8 @@ class FullRelationPointcloudPolicyDataset(Dataset):
             if self.data_args.refine_pose.interp_diffusion_traj_intermediate:
                 # Sample large perturbation and interpolate positions and rotations
                 random_large_rot_inter = self.rot_grid[np.random.randint(self.rot_grid.shape[0])]
-                inter_start_rotmat, inter_start_trans, _ = self.sample_pose_perturbation(inter_pcd, inter_pcd_so_far, normal=False, start_scene_bb=start_scene_bb)
+                #fix output order
+                inter_start_rotmat, inter_start_trans, _ = self.sample_pose_perturbation(inter_pcd, inter_pcd_aug, normal=False, start_scene_bb=start_scene_bb)
 
                 # Interpolate the positions
                 inter_trans_interp = np.linspace(np.zeros(3), inter_start_trans, inter_diff_steps + 1)

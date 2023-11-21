@@ -642,7 +642,8 @@ def main(args: config_util.AttrDict):
             return_part_poses=True,
             return_parent_idx=True,
             **proc_gen_kwargs)
-
+        if('intermediate_pcds' in proc_gen_output_dict):
+            intermediate_pcds = proc_gen_output_dict['intermediate_pcds']
         relative_trans = proc_gen_output_dict['rel_trans']
         part_pose_dict = proc_gen_output_dict['part_poses']
         if 'parent_idx' in proc_gen_output_dict:
@@ -903,6 +904,8 @@ def main(args: config_util.AttrDict):
                 'multi_obj_mesh_file_dec': dict(parent=parent_obj_file_dec_list, child=child_obj_file_dec_list),
                 'multi_obj_part_pose_dict': part_pose_dict
             }
+            if intermediate_pcds:
+                aug_save_dict['intermediate_pcds'] = intermediate_pcds
 
             np.savez(demo_aug_fname, **aug_save_dict)
 
