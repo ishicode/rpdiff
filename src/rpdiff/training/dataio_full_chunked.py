@@ -1245,14 +1245,12 @@ class FullRelationPointcloudPolicyDataset(Dataset):
             success=success)
         
         return success_mi, success_gt
-    
-    #add intermediate_pcds to aug_save_dict in object_scene_procgen_demos
 
     def get_diff_pose_input_gt(self, data: dict, 
                                parent_final_pcd: np.ndarray, child_final_pcd: np.ndarray) -> Tuple[dict]:
         
         mc_load_name = 'scene/dataio/pose_diff'
-        intermediate_pcds = data['intermediate_pcds']
+
         # get pose args
         pose_args = self.data_args.refine_pose
 
@@ -1629,66 +1627,7 @@ class FullRelationPointcloudPolicyDataset(Dataset):
             trans_offset = offset_axis_post_rot
             pose_gt['trans_offset'] = trans_offset
         
-        for inter_idx, inter_pcd in enumerate(intermediate_pcds):
-
-            # Visualization (Optional)
-            if self.debug_viz:
-                util.meshcat_pcd_show(self.mc_vis, inter_pcd, (255, 255, 0), f'{mc_load_name}/{inter_idx}_pre_rot', size=self.MC_SIZE)
-            inter_pcd_aug = inter_pcd.copy()
-            # Point Cloud Augmentation
-            if apply_pcd_aug and (np.random.random() > (1 - pcd_aug_prob)):
-                inter_pcd_aug, _ = self.apply_general_pcd_aug(data, inter_pcd)
-
-            # Rotation Augmentation
-            if rot_aug is not None:
-                random_large_rot_inter = self.rot_grid[np.random.randint(self.rot_grid.shape[0])]
-                inter_pcd_aug = util.rotate_pcd_center(inter_pcd_aug, random_large_rot_inter)
-
-            # Diffusion Trajectory Generation
-            inter_diff_steps = self.data_args.refine_pose.n_diffusion_steps_intermediate
-
-            tf_so_far_inter = np.eye(4)
-
-            # Similar diffusion trajectory generation as for parents and child
-        
-            if self.data_args.refine_pose.interp_diffusion_traj_intermediate:
-                # Sample large perturbation and interpolate positions and rotations
-                random_large_rot_inter = self.rot_grid[np.random.randint(self.rot_grid.shape[0])]
-                #fix output order
-                inter_start_rotmat, inter_start_trans, _ = self.sample_pose_perturbation(inter_pcd, inter_pcd_aug, normal=False, start_scene_bb=start_scene_bb)
-
-                # Interpolate the positions
-                inter_trans_interp = np.linspace(np.zeros(3), inter_start_trans, inter_diff_steps + 1)
-
-                # Interpolate the rotations
-                slerp_inter = Slerp(np.arange(2), R.from_euler('xyz', [0, 0, 0]).as_quat(), use_shortest=True)
-                interp_rots_inter = slerp_inter(np.linspace(0, 1, inter_diff_steps + 1))
-                inter_rotmat_interp = interp_rots_inter.as_matrix()
-                
-                for d_idx_inter in range(1, inter_diff_steps + 1):
-                # Sample perturbation for intermediate point cloud
-                # Replace with your actual logic to sample perturbation for intermediate point cloud
-                    inter_start_pcds, inter_perturb_pose = self.sample_pose_perturbation(inter_pcd_aug, inter_pcd, normal=True, start_scene_bb=start_scene_bb)
-                    inter_parent_start_pcd, inter_child_start_pcd = inter_start_pcds
-                    inter_small_rotmat, inter_small_trans = inter_perturb_pose
-
-                    # Update cumulative transformation for intermediate point cloud
-                    tf_this_step_inter_raw = np.eye(4)
-                    tf_this_step_inter_raw[:-1, :-1] = inter_small_rotmat
-                    tf_this_step_inter_raw[:-1, -1] = inter_small_trans
-
-                    tf_this_step_inter = util.form_tf_mat_cent_pcd_rot(tf_this_step_inter_raw, inter_pcd_so_far)
-                    tf_so_far_inter = np.matmul(tf_this_step_inter, tf_so_far_inter)
-
-                    # Transform intermediate point cloud
-                    inter_pcd_so_far = util.transform_pcd(inter_pcd_so_far, tf_this_step_inter)
-
-            # Output to pose_mi and pose_gt for intermediate point clouds
-                pose_mi[f'intermediate_{inter_idx}_start_pcd'] = util.center_pcd(inter_pcd)
-                pose_gt[f'intermediate_{inter_idx}_start_pcd_mean'] = np.mean(inter_pcd, axis=0)
-                
         return pose_mi, pose_gt
 
     def __getitem__(self, index):
         return self.get_item(index)
-

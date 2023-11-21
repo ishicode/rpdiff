@@ -2,7 +2,6 @@ import os.path as osp
 import numpy as np
 import trimesh
 from scipy.spatial import KDTree
-import scipy.spatial.transform as T
 from scipy.spatial.transform import Rotation as R
 from sklearn.cluster import KMeans
 from scipy.cluster.vq import kmeans2
@@ -74,7 +73,6 @@ class ProcGenRelations:
         (parent object). Uses prior knowledge and heuristics about upright pose and where the 
         peg on the rack is likely to be
         """
-        print("INFERRING MUG ON RACK")
         parent_pose_mat = util.matrix_from_pose(util.list2pose_stamped(parent_pose))
         child_pose_mat = util.matrix_from_pose(util.list2pose_stamped(child_pose))
         parent_tmesh_origin = trimesh.load(parent_mesh).apply_scale(parent_scale)
@@ -144,7 +142,6 @@ class ProcGenRelations:
         child_tmesh_final = child_tmesh_origin.copy().apply_transform(final_mug_pose_mat)
 
         if viz:
-        
             util.meshcat_trimesh_show(self.mc_vis, 'scene/rack_origin', parent_tmesh_origin)
             util.meshcat_frame_show(self.mc_vis, 'scene/parent_frame', util.matrix_from_pose(util.list2pose_stamped(parent_pose)))
             util.meshcat_frame_show(self.mc_vis, 'scene/child_frame', util.matrix_from_pose(util.list2pose_stamped(child_pose)))
@@ -161,7 +158,6 @@ class ProcGenRelations:
             util.meshcat_trimesh_show(self.mc_vis, 'scene/final_mug', child_tmesh_final)
 
         rel_trans = np.matmul(final_mug_pose_mat, np.linalg.inv(child_pose_mat))
-        print("type rel_trans: ", type(rel_trans))
         
         ### post-process
         # check if the final objects are intersecting
@@ -289,7 +285,6 @@ class ProcGenRelations:
                                 parent_scale_list: List[Union[np.ndarray, float]], 
                                 child_scale_list: List[Union[np.ndarray, float]], 
                                 viz: bool, return_parent_idx: bool=True, *args, **kwargs) -> dict:
-        print("INFERRING MUG ON RACK MULTI")
 
         try:
             # to start, suppose we only have a single child object
@@ -341,15 +336,15 @@ class ProcGenRelations:
         rack_base_xy_verts = rack_verts[np.where(rack_verts[:, 2] < rack_bottom_z*1.02)[0]]
         # rack_base_xy_verts = rack_verts[np.where(rack_bottom_z*1.03 < rack_verts[:, 2] < rack_bottom_z*1.04)[0]]
         rack_base_xy_verts[:, -1] = 0.0
-        #util.meshcat_pcd_show(self.mc_vis, rack_base_xy_verts, (255, 255, 0), 'scene/rack_base_xy_verts')
+        util.meshcat_pcd_show(self.mc_vis, rack_base_xy_verts, (255, 255, 0), 'scene/rack_base_xy_verts')
         base_xy_cent = np.mean(rack_base_xy_verts, axis=0)
 
-        #util.meshcat_frame_show(self.mc_vis, 'scene/parent_frame_pre_adjust', util.matrix_from_pose(util.list2pose_stamped(parent_pose)))
+        util.meshcat_frame_show(self.mc_vis, 'scene/parent_frame_pre_adjust', util.matrix_from_pose(util.list2pose_stamped(parent_pose)))
         parent_pose_mat[:2, -1] = base_xy_cent[:2]
         parent_pose = util.pose_stamped2list(util.pose_from_matrix(parent_pose_mat))
-        # util.meshcat_trimesh_show(self.mc_vis, 'scene/rack_world', parent_tmesh)
-        # util.meshcat_trimesh_show(self.mc_vis, 'scene/mug_world', child_tmesh)
-        #util.meshcat_frame_show(self.mc_vis, 'scene/parent_frame', util.matrix_from_pose(util.list2pose_stamped(parent_pose)))
+        util.meshcat_trimesh_show(self.mc_vis, 'scene/rack_world', parent_tmesh)
+        util.meshcat_trimesh_show(self.mc_vis, 'scene/mug_world', child_tmesh)
+        util.meshcat_frame_show(self.mc_vis, 'scene/parent_frame', util.matrix_from_pose(util.list2pose_stamped(parent_pose)))
 
         rack_xy_verts = rack_verts[np.where(rack_verts[:, 2] > rack_bottom_z*1.05)[0]]
         rack_xy_verts[:, -1] = 0.0
@@ -549,49 +544,8 @@ class ProcGenRelations:
 
             util.meshcat_frame_show(self.mc_vis, 'scene/final_mug_pose', final_mug_pose_mat)
             util.meshcat_trimesh_show(self.mc_vis, 'scene/final_mug', child_tmesh_final)
-            i = 0
 
         rel_trans = np.matmul(final_mug_pose_mat, np.linalg.inv(child_pose_mat))
-
-        num_intermediate_frames = 10  # You can adjust this
-        intermediate_frames = []
-        intermediate_meshes = []
-        intermediate_pcds = []
-        child_rotation = R.from_quat(np.array(child_pose)[3:])
-        final_mug_pose_arr = np.array([final_mug_pose.pose.position.x, final_mug_pose.pose.position.y, final_mug_pose.pose.position.z, final_mug_pose.pose.orientation.x, final_mug_pose.pose.orientation.y, final_mug_pose.pose.orientation.z, final_mug_pose.pose.orientation.w])
-        final_mug_rotation = R.from_quat(final_mug_pose_arr[3:])
-        key_rots = R.from_quat([np.array(child_pose)[3:], final_mug_pose_arr[3:]])
-        slerp = T.Slerp(np.arange(2), key_rots)
-        print(child_pose)
-        for t in np.linspace(0, 1, num_intermediate_frames):
-            # Interpolate the rotation component using slerp
-            intermediate_rotation = slerp([t])
-            
-            # Interpolate the translation component
-            intermediate_translation = (1 - t) * np.array(child_pose)[:3] + t * np.array(final_mug_pose_arr)[:3]
-
-            # Combine rotation and translation into an intermediate pose
-            intermediate_pose_mat = np.eye(4)
-            intermediate_pose_mat[:3, :3] = intermediate_rotation.as_matrix()
-            intermediate_pose_mat[:3, 3] = intermediate_translation
-            intermediate_frames.append(intermediate_pose_mat)
-
-            # Apply the intermediate pose to the child mesh
-            intermediate_tmesh = child_tmesh_origin.copy().apply_transform(intermediate_pose_mat)
-            intermediate_point_cloud = intermediate_tmesh.sample(5000)
-            intermediate_pcds.append(intermediate_point_cloud)
-            intermediate_meshes.append(intermediate_tmesh)
-
-        if viz:
-            # Visualize the intermediate frames
-            for i, frame in enumerate(intermediate_frames):
-                print("Intermediate frame: ", i)
-                util.meshcat_frame_show(self.mc_vis, f'scene/intermediate_frame/{i}', frame)
-                util.meshcat_trimesh_show(self.mc_vis, f'scene/intermediate_meshes/{i}', intermediate_meshes[i])
-            from IPython import embed; embed()
-            self.mc_vis['scene/intermediate_frame'].delete()
-            self.mc_vis['scene/intermediate_meshes'].delete()
-
         
         ### post-process
         # check if the final objects are intersecting
@@ -658,8 +612,8 @@ class ProcGenRelations:
 
                 child_tmesh_final = child_tmesh_origin.copy().apply_transform(final_mug_pose_mat)
                 
-                # if viz:
-                #     util.meshcat_trimesh_show(self.mc_vis, 'scene/final_mug', child_tmesh_final)
+                if viz:
+                    util.meshcat_trimesh_show(self.mc_vis, 'scene/final_mug', child_tmesh_final)
 
                 child_mesh_final = child_tmesh_final
                 # child_sample_points = child_mesh_final.sample(n_coll_pts)
@@ -678,18 +632,17 @@ class ProcGenRelations:
                 log_debug(f'Number of intersecting child points: {nc_pts} and parent points: {np_pts}')
 
                 if viz:
-                    # util.meshcat_pcd_show(self.mc_vis, c_pts, (0, 255, 0), 'scene/child_pts_in_coll')
-                    # util.meshcat_pcd_show(self.mc_vis, p_pts, (0, 255, 255), 'scene/parent_pts_in_coll')
+                    util.meshcat_pcd_show(self.mc_vis, c_pts, (0, 255, 0), 'scene/child_pts_in_coll')
+                    util.meshcat_pcd_show(self.mc_vis, p_pts, (0, 255, 255), 'scene/parent_pts_in_coll')
                 
-                    # if nc_pts > 0:
-                    #     c_cent = np.mean(c_pts, axis=0)
-                    #     c_sph = trimesh.creation.uv_sphere(0.005).apply_translation(c_cent)
-                    #     util.meshcat_trimesh_show(self.mc_vis, 'scene/child_coll_cent', c_sph, color=(0, 255, 0))
-                    # if np_pts > 0:
-                    #     p_cent = np.mean(p_pts, axis=0)
-                    #     p_sph = trimesh.creation.uv_sphere(0.005).apply_translation(p_cent)
-                    #     util.meshcat_trimesh_show(self.mc_vis, 'scene/child_coll_cent', p_sph, color=(0, 255, 255))
-                    i = 0
+                    if nc_pts > 0:
+                        c_cent = np.mean(c_pts, axis=0)
+                        c_sph = trimesh.creation.uv_sphere(0.005).apply_translation(c_cent)
+                        util.meshcat_trimesh_show(self.mc_vis, 'scene/child_coll_cent', c_sph, color=(0, 255, 0))
+                    if np_pts > 0:
+                        p_cent = np.mean(p_pts, axis=0)
+                        p_sph = trimesh.creation.uv_sphere(0.005).apply_translation(p_cent)
+                        util.meshcat_trimesh_show(self.mc_vis, 'scene/child_coll_cent', p_sph, color=(0, 255, 255))
 
                 # print('here in main, after getting relative_trans and checking collision')
                 # from IPython import embed; embed()
@@ -724,7 +677,6 @@ class ProcGenRelations:
         out_dict = {}
         out_dict['rel_trans'] = rel_trans
         out_dict['parent_idx'] = parent_idx
-        out_dict['intermediate_pcds'] = intermediate_pcds
 
         part_poses = dict(
             parent_part_world=handle_peg_pose,
@@ -1299,4 +1251,3 @@ class ProcGenRelations:
 
         # return rel_trans
         return out_dict
-
