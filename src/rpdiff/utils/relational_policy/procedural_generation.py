@@ -678,17 +678,17 @@ class ProcGenRelations:
                 log_debug(f'Number of intersecting child points: {nc_pts} and parent points: {np_pts}')
 
                 if viz:
-                    # util.meshcat_pcd_show(self.mc_vis, c_pts, (0, 255, 0), 'scene/child_pts_in_coll')
-                    # util.meshcat_pcd_show(self.mc_vis, p_pts, (0, 255, 255), 'scene/parent_pts_in_coll')
+                    util.meshcat_pcd_show(self.mc_vis, c_pts, (0, 255, 0), 'scene/child_pts_in_coll')
+                    util.meshcat_pcd_show(self.mc_vis, p_pts, (0, 255, 255), 'scene/parent_pts_in_coll')
                 
-                    # if nc_pts > 0:
-                    #     c_cent = np.mean(c_pts, axis=0)
-                    #     c_sph = trimesh.creation.uv_sphere(0.005).apply_translation(c_cent)
-                    #     util.meshcat_trimesh_show(self.mc_vis, 'scene/child_coll_cent', c_sph, color=(0, 255, 0))
-                    # if np_pts > 0:
-                    #     p_cent = np.mean(p_pts, axis=0)
-                    #     p_sph = trimesh.creation.uv_sphere(0.005).apply_translation(p_cent)
-                    #     util.meshcat_trimesh_show(self.mc_vis, 'scene/child_coll_cent', p_sph, color=(0, 255, 255))
+                    if nc_pts > 0:
+                        c_cent = np.mean(c_pts, axis=0)
+                        c_sph = trimesh.creation.uv_sphere(0.005).apply_translation(c_cent)
+                        util.meshcat_trimesh_show(self.mc_vis, 'scene/child_coll_cent', c_sph, color=(0, 255, 0))
+                    if np_pts > 0:
+                        p_cent = np.mean(p_pts, axis=0)
+                        p_sph = trimesh.creation.uv_sphere(0.005).apply_translation(p_cent)
+                        util.meshcat_trimesh_show(self.mc_vis, 'scene/child_coll_cent', p_sph, color=(0, 255, 255))
                     i = 0
 
                 # print('here in main, after getting relative_trans and checking collision')
