@@ -1630,35 +1630,30 @@ class FullRelationPointcloudPolicyDataset(Dataset):
             pose_gt['trans_offset'] = trans_offset
         
         for inter_idx, inter_pcd in enumerate(intermediate_pcds):
+            
+            indiv_perturb_pose_list_inter = []
+            indiv_full_perturb_pose_list_inter = []
+            cumul_perturb_pose_list_inter = []
+            cumul_full_perturb_pose_list_inter = []
 
-            # Visualization (Optional)
-            if self.debug_viz:
-                util.meshcat_pcd_show(self.mc_vis, inter_pcd, (255, 255, 0), f'{mc_load_name}/{inter_idx}_pre_rot', size=self.MC_SIZE)
-            inter_pcd_aug = inter_pcd.copy()
-            # Point Cloud Augmentation
-            if apply_pcd_aug and (np.random.random() > (1 - pcd_aug_prob)):
-                inter_pcd_aug, _ = self.apply_general_pcd_aug(data, inter_pcd)
-
-            # Rotation Augmentation
-            if rot_aug is not None:
-                random_large_rot_inter = self.rot_grid[np.random.randint(self.rot_grid.shape[0])]
-                inter_pcd_aug = util.rotate_pcd_center(inter_pcd_aug, random_large_rot_inter)
+            inter_pcd_so_far = inter_pcd.copy()
 
             # Diffusion Trajectory Generation
-            inter_diff_steps = self.data_args.refine_pose.n_diffusion_steps_intermediate
+            inter_diff_steps = self.data_args.refine_pose.n_diffusion_steps
 
             tf_so_far_inter = np.eye(4)
-
+            inter_pcd_so_far = inter_pcd.copy()
             # Similar diffusion trajectory generation as for parents and child
         
             if self.data_args.refine_pose.interp_diffusion_traj_intermediate:
                 # Sample large perturbation and interpolate positions and rotations
                 random_large_rot_inter = self.rot_grid[np.random.randint(self.rot_grid.shape[0])]
                 #fix output order
-                inter_start_rotmat, inter_start_trans, _ = self.sample_pose_perturbation(inter_pcd, inter_pcd_aug, normal=False, start_scene_bb=start_scene_bb)
-
+                pcds, tf = self.sample_pose_perturbation(inter_pcd, inter_pcd, normal=False, start_scene_bb=start_scene_bb)
+                inter_rotmat_pert, inter_trans_pert = tf
+                inter_quat_pert = R.from_matrix(inter_rotmat_pert).as_quat()
                 # Interpolate the positions
-                inter_trans_interp = np.linspace(np.zeros(3), inter_start_trans, inter_diff_steps + 1)
+                inter_trans_interp = np.linspace(np.zeros(3), inter_trans_pert, inter_diff_steps + 1)
 
                 # Interpolate the rotations
                 slerp_inter = Slerp(np.arange(2), R.from_euler('xyz', [0, 0, 0]).as_quat(), use_shortest=True)
@@ -1668,9 +1663,8 @@ class FullRelationPointcloudPolicyDataset(Dataset):
                 for d_idx_inter in range(1, inter_diff_steps + 1):
                 # Sample perturbation for intermediate point cloud
                 # Replace with your actual logic to sample perturbation for intermediate point cloud
-                    inter_start_pcds, inter_perturb_pose = self.sample_pose_perturbation(inter_pcd_aug, inter_pcd, normal=True, start_scene_bb=start_scene_bb)
-                    inter_parent_start_pcd, inter_child_start_pcd = inter_start_pcds
-                    inter_small_rotmat, inter_small_trans = inter_perturb_pose
+                    inter_small_trans = trans_interp[d_idx_inter] - trans_interp[d_idx_inter-1]
+                    inter_small_rotmat = np.matmul(rotmat_interp[d_idx_inter], np.linalg.inv(rotmat_interp[d_idx_inter-1]))
 
                     # Update cumulative transformation for intermediate point cloud
                     tf_this_step_inter_raw = np.eye(4)
@@ -1680,12 +1674,25 @@ class FullRelationPointcloudPolicyDataset(Dataset):
                     tf_this_step_inter = util.form_tf_mat_cent_pcd_rot(tf_this_step_inter_raw, inter_pcd_so_far)
                     tf_so_far_inter = np.matmul(tf_this_step_inter, tf_so_far_inter)
 
-                    # Transform intermediate point cloud
                     inter_pcd_so_far = util.transform_pcd(inter_pcd_so_far, tf_this_step_inter)
 
+                    indiv_perturb_pose_list_inter.append(tf_this_step_inter_raw)
+                    cumul_perturb_pose_list_inter.append(tf_so_far_inter)
+                    # Transform intermediate point cloud
+                    
+                    tf_this_step_full_raw_inter = np.eye(4); tf_this_step_full_raw_inter[:-1, :-1] = inter_rotmat_interp[d_idx_inter]; tf_this_step_full_raw_inter[:-1, -1] = inter_trans_interp[d_idx_inter]
+                    tf_this_step_full_inter = util.form_tf_mat_cent_pcd_rot(tf_this_step_full_raw, inter_pcd)
+                    indiv_full_perturb_pose_list_inter.append(tf_this_step_full_raw)
+                    cumul_full_perturb_pose_list_inter.append(tf_this_step_full)
+
+                    if self.debug_viz:
+                        color2 = tuple((color_list2[d_idx][:3] * 255).astype(np.uint8).tolist())
+                        tf_inter_start_pcd = util.transform_pcd(child_final_pcd, tf_so_far_inter)
+                        util.meshcat_pcd_show(self.mc_vis, tf_child_start_pcd, color2, f'{mc_load_name}/diff_pcds_so_far/pcd_{d_idx}', size=self.MC_SIZE)
+
             # Output to pose_mi and pose_gt for intermediate point clouds
-                pose_mi[f'intermediate_{inter_idx}_start_pcd'] = util.center_pcd(inter_pcd)
-                pose_gt[f'intermediate_{inter_idx}_start_pcd_mean'] = np.mean(inter_pcd, axis=0)
+                pose_mi[f'intermediate_{d_idx_inter}_start_pcd'] = util.center_pcd(inter_pcd)
+                pose_gt[f'intermediate_{d_idx_inter}_start_pcd_mean'] = np.mean(inter_pcd, axis=0)
                 
         return pose_mi, pose_gt
 
