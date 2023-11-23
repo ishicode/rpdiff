@@ -408,6 +408,7 @@ class FullRelationPointcloudPolicyDataset(Dataset):
         # get the start and final point clouds (used by all)
         parent_final_pcd_raw = data['multi_obj_final_pcd'].item()['parent']
         child_final_pcd_raw = data['multi_obj_final_pcd'].item()['child']
+        intermediate_pcds_raw = data['intermediate_pcds']
 
         # Load "full" point clouds instead of camera point clouds
         if self.load_full_pcd:
@@ -423,9 +424,18 @@ class FullRelationPointcloudPolicyDataset(Dataset):
         if self.debug_viz:
             util.meshcat_pcd_show(self.mc_vis, parent_final_pcd_raw, (255, 0, 0), 'scene/data_loader/get_raw/parent_final_pcd')
             util.meshcat_pcd_show(self.mc_vis, child_final_pcd_raw, (0, 0, 255), 'scene/data_loader/get_raw/child_final_pcd')
+            num_inter_pcd = 0
+            for inter_pcd in intermediate_pcds_raw:
+                num_inter_pcd += 1
+                util.meshcat_pcd_show(self.mc_vis, inter_pcd, (0, 0, 255), 'scene/data_loader/get_raw/child_final_pcd')
 
         try:
             parent_final_pcd, child_final_pcd = self.process_general_start_final_pcd(data, parent_final_pcd_raw, child_final_pcd_raw)
+            #processing the intermediate raw pcd
+            intermediate_final_pcds = np.array([])
+            for inter_pcd in intermediate_pcds_raw:
+                intermediate_final_pcds.append(train_util.check_enough_points(inter_pcd, self.shape_pcd_n))
+
         except ValueError as e:
             print(f'[Data Loader] Exception: {e}')
             self.not_success_idx.append(index)
@@ -445,7 +455,7 @@ class FullRelationPointcloudPolicyDataset(Dataset):
             if self.diffusion_steps:
                 pose_mi, pose_gt = self.get_diff_pose_input_gt(
                     data, 
-                    parent_final_pcd, child_final_pcd)
+                    parent_final_pcd, child_final_pcd, intermediate_final_pcds)
             else:
                 pose_mi, pose_gt = self.get_pose_input_gt(
                     data, 
@@ -1249,10 +1259,9 @@ class FullRelationPointcloudPolicyDataset(Dataset):
     #add intermediate_pcds to aug_save_dict in object_scene_procgen_demos
 
     def get_diff_pose_input_gt(self, data: dict, 
-                               parent_final_pcd: np.ndarray, child_final_pcd: np.ndarray) -> Tuple[dict]:
+                               parent_final_pcd: np.ndarray, child_final_pcd: np.ndarray, intermediate_final_pcds: np.ndarray) -> Tuple[dict]:
         
         mc_load_name = 'scene/dataio/pose_diff'
-        intermediate_pcds = data['intermediate_pcds']
         # get pose args
         pose_args = self.data_args.refine_pose
 
@@ -1629,7 +1638,7 @@ class FullRelationPointcloudPolicyDataset(Dataset):
             trans_offset = offset_axis_post_rot
             pose_gt['trans_offset'] = trans_offset
         
-        for inter_idx, inter_pcd in enumerate(intermediate_pcds):
+        for inter_idx, inter_pcd in enumerate(intermediate_final_pcds):
             
             indiv_perturb_pose_list_inter = []
             indiv_full_perturb_pose_list_inter = []
@@ -1675,11 +1684,10 @@ class FullRelationPointcloudPolicyDataset(Dataset):
                     tf_so_far_inter = np.matmul(tf_this_step_inter, tf_so_far_inter)
 
                     inter_pcd_so_far = util.transform_pcd(inter_pcd_so_far, tf_this_step_inter)
-
                     indiv_perturb_pose_list_inter.append(tf_this_step_inter_raw)
                     cumul_perturb_pose_list_inter.append(tf_so_far_inter)
                     # Transform intermediate point cloud
-                    
+                    from IPython import embed; embed()
                     tf_this_step_full_raw_inter = np.eye(4); tf_this_step_full_raw_inter[:-1, :-1] = inter_rotmat_interp[d_idx_inter]; tf_this_step_full_raw_inter[:-1, -1] = inter_trans_interp[d_idx_inter]
                     tf_this_step_full_inter = util.form_tf_mat_cent_pcd_rot(tf_this_step_full_raw, inter_pcd)
                     indiv_full_perturb_pose_list_inter.append(tf_this_step_full_raw)
@@ -1689,6 +1697,8 @@ class FullRelationPointcloudPolicyDataset(Dataset):
                         color2 = tuple((color_list2[d_idx][:3] * 255).astype(np.uint8).tolist())
                         tf_inter_start_pcd = util.transform_pcd(child_final_pcd, tf_so_far_inter)
                         util.meshcat_pcd_show(self.mc_vis, tf_child_start_pcd, color2, f'{mc_load_name}/diff_pcds_so_far/pcd_{d_idx}', size=self.MC_SIZE)
+            
+            #TODO: Add in sampling for 
 
             # Output to pose_mi and pose_gt for intermediate point clouds
                 pose_mi[f'intermediate_{d_idx_inter}_start_pcd'] = util.center_pcd(inter_pcd)

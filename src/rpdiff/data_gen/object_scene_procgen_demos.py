@@ -906,7 +906,6 @@ def main(args: config_util.AttrDict):
             }
             if intermediate_pcds:
                 aug_save_dict['intermediate_pcds'] = intermediate_pcds
-
             np.savez(demo_aug_fname, **aug_save_dict)
 
         pause_mc_thread(True)
