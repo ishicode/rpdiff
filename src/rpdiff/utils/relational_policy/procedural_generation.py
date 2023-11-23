@@ -552,8 +552,25 @@ class ProcGenRelations:
         # child_mesh_final = child_tmesh_final
         parent_mesh_final = parent_tmesh
         n_coll_pts = 5000
+        boundary_density = 0.8  # Adjust this value to control density around boundaries
+        center_density = 0.2  # Adjust this value to control density at the center
+        n_coll_pts_boundary = int(n_coll_pts * boundary_density)
+        n_coll_pts_center = n_coll_pts - n_coll_pts_boundary
+
         parent_sample_points = parent_mesh_final.sample(n_coll_pts)
+        boundary_points = parent_mesh_final.bounding_box.vertices
+        center_points = parent_mesh_final.center_mass.reshape(1, -1)
+        boundary_sampled_points = parent_mesh_final.sample(n_coll_pts_boundary // 2)  # Sample around the boundaries
+        center_sampled_points = np.repeat(center_points, n_coll_pts_center, axis=0)  # Sample at the center
+        parent_sample_points = np.vstack([boundary_sampled_points, center_sampled_points])
+
+
         child_sample_points_original = child_tmesh_origin.sample(n_coll_pts)
+        boundary_points = child_mesh_final.bounding_box.vertices
+        center_points = child_mesh_final.center_mass.reshape(1, -1)
+        boundary_sampled_points = child_mesh_final.sample(n_coll_pts_boundary // 2)  # Sample around the boundaries
+        center_sampled_points = np.repeat(center_points, n_coll_pts_center, axis=0)  # Sample at the center
+        child_sample_points = np.vstack([boundary_sampled_points, center_sampled_points])
         # parent_sample_points_original = parent_mesh_final.sample(n_coll_pts)
 
         # child_sample_points = copy.deepcopy(child_sample_points_original)
