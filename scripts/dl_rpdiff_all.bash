@@ -41,7 +41,7 @@ wget -O $BOOK_BOOKSHELF_TARNAME https://www.dropbox.com/s/crnlfucbogwkc3i/book_o
 wget -O $MUG_RACK_TARNAME https://www.dropbox.com/s/op1jft08hz5pelw/mug_on_rack_multi_large_proc_gen_demos.tar.gz?dl=0 
 wget -O $CAN_CABINET_TARNAME https://www.dropbox.com/s/eof4ahcjx94wgua/can_in_cabinet_stack.tar.gz?dl=0
 
-TRAIN_DATA_DIR=$RPDIFF_SOURCE_DIR/data/task_demos
+TRAIN_DATA_DIR=$RPDIFF_SOURCE_DIR/data/control
 mkdir -p $TRAIN_DATA_DIR
 
 mv $BOOK_BOOKSHELF_TARNAME $TRAIN_DATA_DIR

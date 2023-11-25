@@ -86,27 +86,27 @@ def train(
         coarse_aff_model2 = coarse_aff_model2.train()
 
     while True:
-
+        print(f"PID: {os.getpid()}")
         if it > args.experiment.num_iterations:
             break
-        
         if args.debug_data:
             # sample = train_dataloader.dataset[0]
-            sample = train_dataloader.dataset[371]
+            sample = train_dataloader.dataset[0]
             # sample = train_dataloader.dataset[1963]
             print('[Debug Data] Here with sample')
 
-            # for i in range(len(train_dataloader.dataset)):
-            #     sample = train_dataloader.dataset[i]
+            for i in range(len(train_dataloader.dataset)):
+                sample = train_dataloader.dataset[i]
             #     if 'parent_start_pcd' not in sample[1][0].keys():
             #         print(f'[Debug Data] Here with bad sample (index: {i})')
-            #         from IPython import embed; embed()
+                from IPython import embed; embed()
 
-            from IPython import embed; embed()
+        from IPython import embed; embed()
         for sample in train_dataloader:
+            print(f"iteration: {it}")
             it += 1
             current_epoch = it * bs / len(train_dataloader.dataset)
-
+            import pdb; pdb.set_trace()
             start_time = time.time()
 
             coarse_aff_sample, refine_pose_sample, success_sample = sample
@@ -201,7 +201,7 @@ def train(
                 # prepare input and gt
                 refine_pose_mi = dict_to_gpu(refine_pose_mi)
                 refine_pose_gt = dict_to_gpu(refine_pose_gt)
-
+                #from IPython import embed; embed()
                 refine_pose_out = train_iter_refine_pose(
                     refine_pose_mi,
                     refine_pose_gt,
@@ -214,8 +214,8 @@ def train(
                     mc_vis=mc_vis)
                 
                 # process output for logging
-                for k, v in refine_pose_out['loss'].items():
-                    loss_dict[k] = v
+                # for k, v in refine_pose_out['loss'].items():
+                #     loss_dict[k] = v
 
                 if args.experiment.train.success_from_refine_pred:
                     # process coarse prediction and success input to create new success input
@@ -223,6 +223,7 @@ def train(
                             refine_pose_mi, refine_pose_out['model_output'], refine_pose_gt, 
                             success_mi, success_gt, 
                             args, mc_vis=mc_vis) 
+            print("done with if")
                 
             if args.experiment.train.train_success and (len(success_mi) > 0):
                 if args.experiment.train.success_from_refine_pred and (len(refine_pose_mi) == 0):
@@ -247,6 +248,7 @@ def train(
                 # process output for logging
                 for k, v in success_out['loss'].items():
                     loss_dict[k] = v
+            print("back to loop")
 
             #######################################################################
             # Logging and checkpoints
@@ -348,10 +350,11 @@ def main(args: config_util.AttrDict):
             data_args.data_root,
             data_args.dataset_path)
     else:
-        dataset_path = osp.join(
-            path_util.get_rpdiff_data(), 
-            data_args.data_root,
-            data_args.dataset_path)
+        dataset_path = "/home/ishita/ishi/rpdiff/src/rpdiff/data/control/mug_rack_multi_test/task_name_mug_on_rack_multi_chunked/"
+            # osp.join(
+            # path_util.get_rpdiff_data(), 
+            # data_args.data_root,
+            # data_args.dataset_path)
 
     assert osp.exists(dataset_path), f'Dataset path: {dataset_path} does not exist'
     

@@ -28,7 +28,7 @@ experiment:
 
 data:
     dataset_path: null  # set me to specify dataset folder
-    data_root: task_demos # task_demos/demo_aug
+    data_root: control # task_demos/demo_aug
     split: train
     chunked: True
     load_into_memory: True

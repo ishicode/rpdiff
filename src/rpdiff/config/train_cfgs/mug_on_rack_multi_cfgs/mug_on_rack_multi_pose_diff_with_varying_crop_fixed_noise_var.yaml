@@ -1,7 +1,7 @@
 inherit_from: base.yaml
 experiment:
     num_train_workers: 12
-    batch_size: 16
+    batch_size: 4
     experiment_name: mug_on_rack_multi_refine_pose_only_nsmglobal_1q_diff_steps_timestep_anneal_crop_interp_large_5_more_precise_sampling_rpdiff_edit
     meshcat_on: True
     resume: True
@@ -17,7 +17,7 @@ experiment:
 
 
 data:
-    dataset_path: mug_on_rack_multi_large_proc_gen_demos/task_name_mug_on_rack_multi_chunked  # set me to specify dataset folder
+    dataset_path: mug_on_rack_multi_test/task_name_mug_on_rack_multi_chunked #mug_on_rack_multi_large_proc_gen_demos/task_name_mug_on_rack_multi_chunked  # set me to specify dataset folder
     parent_mesh_dir: syn_rack_med
     child_mesh_dir: mug_centered_obj_normalized
     load_full_pcd: False

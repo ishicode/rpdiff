@@ -161,7 +161,7 @@ class ProcGenRelations:
         
         ### post-process
         # check if the final objects are intersecting
-        # child_mesh_final = child_tmesh_final
+        # xchild_mesh_final = child_tmesh_final
         parent_mesh_final = parent_tmesh
         n_coll_pts = 5000
         parent_sample_points = parent_mesh_final.sample(n_coll_pts)
@@ -549,7 +549,7 @@ class ProcGenRelations:
         
         ### post-process
         # check if the final objects are intersecting
-        # child_mesh_final = child_tmesh_final
+        child_mesh_final = child_tmesh_final
         parent_mesh_final = parent_tmesh
         n_coll_pts = 5000
         boundary_density = 0.8  # Adjust this value to control density around boundaries
