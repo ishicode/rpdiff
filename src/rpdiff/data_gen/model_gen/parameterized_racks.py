@@ -19,7 +19,7 @@ for i in range(10):
     # new_rack.show()
     new_racks.append(new_rack)
 
-# from IPython import embed; embed()
+# ### from IPython import embed; embed()
 
 base_cyl_height, base_cyl_radius = 0.3, 0.01
 peg_cyl_height, peg_cyl_radius = 0.1, 0.005
@@ -68,4 +68,4 @@ for _ in range(10):
     scene.add_geometry([base_cyl] + peg_cyl_list)
     scene.show()
 
-from IPython import embed; embed()
+### from IPython import embed; embed()

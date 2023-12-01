@@ -114,7 +114,7 @@ class LocalPoolPointnet(nn.Module):
     #     fea_grid = fea_grid.reshape(p.size(0), self.c_dim, self.reso_grid, self.reso_grid, self.reso_grid) # sparce matrix (B x 512 x reso x reso)
     #     
     #     # print('local pool pointnet, generate_grid_features')
-    #     # from IPython import embed; embed()
+    #     # ### from IPython import embed; embed()
     #     if self.unet3d is not None:
     #         # print('feature grid unet3d')
     #         fea_grid = self.unet3d(fea_grid)
@@ -188,7 +188,7 @@ class LocalPoolPointnet(nn.Module):
             index['grid'] = coordinate2index(coord['grid'], self.reso_grid, coord_type='3d')
 
         # print('Here in pointnet local forward, after getting index and coord')
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
 
         if self.map2local:
             # pp = self.map2local(p)
@@ -237,7 +237,7 @@ class LocalPoolPointnet(nn.Module):
         c = self.fc_c(net)
 
         # print('Here in pointnet local forward, after fc_c')
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
 
         # raster_pts = make_3d_grid((-0.55, -0.55, -0.55), (0.55, 0.55, 0.55), (self.reso_grid, self.reso_grid, self.reso_grid))[None, :, :].repeat(batch_size, 1, 1).cuda() #.numpy()
         # # # reshape to grid, and swap axes (permute x and z), B x reso x reso x reso x 3
@@ -299,7 +299,7 @@ class LocalPoolPointnet(nn.Module):
             fea['yz'] = self.generate_plane_features(p_coords, c, plane='yz')
 
         # print('Here in pointnet local forward, after generate_grid_features')
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
 
         # # fea_grid = fea['grid'][0].reshape(-1, 32)
         # fea_grid = fea['grid'].permute(0, 2, 3, 4, 1)[0].reshape(-1, self.c_dim)

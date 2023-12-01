@@ -391,7 +391,7 @@ def main(args):
         new_parent_scale = None
         # check if bottle/container are the right sizes
         if parent_class == 'box_container' and child_class == 'bottle':
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
             container_mesh = trimesh.load(parent_obj_file_dec)
             bottle_mesh = trimesh.load(child_obj_file_dec)
             container_mesh.apply_scale(pc_master_dict['parent']['scale_default'])
@@ -437,7 +437,7 @@ def main(args):
             log_info(ext_str)
 
             # check the 2D extents
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
 
         for pc in pcl:
             pc_master_dict[pc]['mesh_file'] = parent_obj_file if pc == 'parent' else child_obj_file
@@ -674,7 +674,7 @@ def main(args):
         #         util.meshcat_trimesh_show(mc_vis, 'scene/child_coll_cent', p_sph, color=(0, 255, 255))
 
         #     print('here in main, after getting relative_trans and checking collision')
-        #     from IPython import embed; embed()
+        #     ### from IPython import embed; embed()
 
         #     if nc_pts > 0 or np_pts > 0:
         #         delta_t = 0.02 * (np.random.random(3) - 0.5) 
@@ -689,7 +689,7 @@ def main(args):
 
         final_child_pose_mat = np.matmul(relative_trans, start_child_pose_mat)
 
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
         time.sleep(0.1)
 
         pb_client.set_step_sim(True)
@@ -735,7 +735,7 @@ def main(args):
         obj_surf_contacts = p.getContactPoints(pc_master_dict['child']['pb_obj_id'], pc_master_dict['parent']['pb_obj_id'], -1, -1)
         touching_surf = len(obj_surf_contacts) > 0
         success_crit_dict['touching_surf'] = touching_surf
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
         if parent_class == 'box_container' and child_class == 'bottle':
             bottle_final_pose = np.concatenate(p.getBasePositionAndOrientation(pc_master_dict['child']['pb_obj_id'])[:2]).tolist()
 
@@ -755,7 +755,7 @@ def main(args):
 
             # bottle_upright = upright_ori_diff < args.upright_ori_diff_thresh
             
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
 
         # take an image to make sure it's good
         eval_rgb = eval_cam.get_images(get_rgb=True)[0]

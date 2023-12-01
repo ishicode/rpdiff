@@ -60,7 +60,7 @@ def voxel_affordance(model_outputs, ground_truth, reso, val=False):
 
     # make one-hot
     label_onehot = torch.nn.functional.one_hot(label.long(), num_classes=reso**3)
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
     pred = model_outputs['voxel_affordance']
 
     # affordance_loss = bce(pred, label_onehot.float())

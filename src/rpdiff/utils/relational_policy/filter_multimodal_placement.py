@@ -110,7 +110,7 @@ def remove_redundant_tf(policy_mi, voxel_idx_final, rot_idx_final, trans_idx_fin
         util.meshcat_pcd_show(mc_vis, pcd_cent + pcd_mean, color, f'scene/infer/filter_pcd/pcd_{ii}', size=0.002)
 
     # print(f'Done filtering!')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     # remove everything from the rest of these
     return filtered_policy_mi, voxel_idx_final, rot_idx_final, trans_idx_final #, rot_mat_queries_final, trans_queries_final
@@ -153,7 +153,7 @@ def manual_place_success(ppcd_world, cpcd_world, mc_vis):
     #     size=sz)
 
     # print(f'Parent score: {p_occ_score}, Child score: {c_occ_score}')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     return score
 
@@ -229,7 +229,7 @@ def manual_place_success_gt(ppcd_world, cpcd_world, mesh_dict, mc_vis):
     #     size=sz)
 
     # print(f'Parent score: {p_occ_score}, Child score: {c_occ_score}, GT score: {gt_occ_score}')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     return score
 
@@ -238,7 +238,7 @@ def compute_coverage(out_poses_wf, avail_poses_wf, out_scores, mc_vis, t_thresh=
     from scipy.spatial.transform import Rotation as R
     
     # print("here to compute coverage")
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     mc_ex = 'scene/compute_coverage'
 
@@ -403,6 +403,6 @@ def compute_coverage(out_poses_wf, avail_poses_wf, out_scores, mc_vis, t_thresh=
     out_coverage_dict['t_thresh_prec'] = t_thresh_prec
     
     # print("Here in out coverage compute")
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     return out_coverage_dict

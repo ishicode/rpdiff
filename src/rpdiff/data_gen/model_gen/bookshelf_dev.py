@@ -269,4 +269,4 @@ if __name__ == "__main__":
         show=True, mc_vis=mc_vis)
 
     full_bookshelf_mesh.show()
-    from IPython import embed; embed()
+    ### from IPython import embed; embed()

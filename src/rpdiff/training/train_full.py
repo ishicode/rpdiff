@@ -92,18 +92,18 @@ def train(
         
         if args.debug_data:
             # sample = train_dataloader.dataset[0]
-            sample = train_dataloader.dataset[371]
             # sample = train_dataloader.dataset[1963]
             print('[Debug Data] Here with sample')
-
-            # for i in range(len(train_dataloader.dataset)):
-            #     sample = train_dataloader.dataset[i]
+            for i in range(len(train_dataloader.dataset)):
+                print(f"i = {i}")
+                sample = train_dataloader.dataset[i]
+            print("[Debug Data] Done with retrieving samples")
             #     if 'parent_start_pcd' not in sample[1][0].keys():
             #         print(f'[Debug Data] Here with bad sample (index: {i})')
-            #         from IPython import embed; embed()
-
-            from IPython import embed; embed()
+            #         ### from IPython import embed; embed()
+                    
         for sample in train_dataloader:
+            print(f"it = {it}")
             it += 1
             current_epoch = it * bs / len(train_dataloader.dataset)
 
@@ -144,6 +144,7 @@ def train(
                     loss_dict[k] = v
 
                 if args.experiment.train.coarse_aff_from_coarse_pred:
+                    print("figuring out debug 1")
                     # process coarse prediction and refine input to create new refine input
                     
                     if args.model.coarse_aff.multi_model:
@@ -197,7 +198,7 @@ def train(
                             rot_mat_grid, voxel_grid_pts, args, mc_vis=mc_vis)
 
             if args.experiment.train.train_refine_pose and (len(refine_pose_mi) > 0):
-
+                print("figuring out debug 2")
                 # prepare input and gt
                 refine_pose_mi = dict_to_gpu(refine_pose_mi)
                 refine_pose_gt = dict_to_gpu(refine_pose_gt)
@@ -264,8 +265,8 @@ def train(
                         string += f'{loss_name}: {loss_val.mean().item():.6f} '
                         logger.add_scalar(loss_name, loss_val.mean().item(), it)
 
-                if args.experiment.debug:
-                    from IPython import embed; embed()
+                # if args.experiment.debug:
+                #     ### from IPython import embed; embed()
 
                 end_time = time.time()
                 total_duration = end_time - start_time

@@ -762,7 +762,7 @@ def meshcat_pcd_show(
 
     if debug:
         print("here in meshcat_pcd_show")
-        from IPython import embed; embed()
+        ### from IPython import embed; embed()
 
     mc_vis[name].set_object(
         mcg.Points(

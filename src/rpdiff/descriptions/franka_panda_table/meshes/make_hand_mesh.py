@@ -42,4 +42,4 @@ combined_hand.apply_translation([0, 0, -0.105])
 combined_hand.show()
 
 
-from IPython import embed; embed()
+### from IPython import embed; embed()

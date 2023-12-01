@@ -632,7 +632,7 @@ def main(args: config_util.AttrDict) -> None:
                     try_feasible_pose += 1
                     if try_feasible_pose > 100:
                         log_warn('Attempted to find feasible pose 100 times, something is wrong')
-                        from IPython import embed; embed()
+                        ### from IPython import embed; embed()
 
                     if feasible_pose:
                         log_debug('Found feasible pose')
@@ -974,7 +974,7 @@ def main(args: config_util.AttrDict) -> None:
         except IndexError as e:
             print(f'IndexError: {e}')
             print('here with place_parent_idx')
-            from IPython import embed; embed()
+            ### from IPython import embed; embed()
 
         start_parent_pose = np.concatenate(pb_client.get_body_state(place_parent_obj_id)[:2]).tolist()
         start_parent_pose_mat = util.matrix_from_pose(util.list2pose_stamped(start_parent_pose))

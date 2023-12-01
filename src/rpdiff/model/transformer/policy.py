@@ -164,7 +164,7 @@ class NSMTransformerSingleTransformationRegression(LocalAbstractPolicy):
         #     util.meshcat_trimesh_show(self.mc_vis, f'scene/process/sph/cpcd_perm_sph_{i}', sph, (0, 0, 255))
 
         # print('here after getting des and pcd (perm)')
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
 
         des_full_parent_coords = torch.gather(des_full_parent_coords, dim=1, index=perm1[:, :, None].repeat((1, 1, des_full_parent_coords.shape[-1])))
         des_full_child_coords = torch.gather(des_full_child_coords, dim=1, index=perm2[:, :, None].repeat((1, 1, des_full_child_coords.shape[-1])))
@@ -393,7 +393,7 @@ class NSMTransformerSingleTransformationRegressionCVAE(LocalAbstractPolicy):
         #     util.meshcat_trimesh_show(self.mc_vis, f'scene/process/sph/cpcd_perm_sph_{i}', sph, (0, 0, 255))
 
         # print('here after getting des and pcd (perm)')
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
 
         des_full_parent_coords = torch.gather(des_full_parent_coords, dim=1, index=perm1[:, :, None].repeat((1, 1, des_full_parent_coords.shape[-1])))
         des_full_child_coords = torch.gather(des_full_child_coords, dim=1, index=perm2[:, :, None].repeat((1, 1, des_full_child_coords.shape[-1])))
@@ -624,7 +624,7 @@ class NSMTransformerSingleSuccessClassifier(LocalAbstractSuccessClassifier):
         #     util.meshcat_trimesh_show(self.mc_vis, f'scene/process/sph/cpcd_perm_sph_{i}', sph, (0, 0, 255))
 
         # print('here after getting des and pcd (perm)')
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
 
         des_full_parent_coords = torch.gather(des_full_parent_coords, dim=1, index=perm1[:, :, None].repeat((1, 1, des_full_parent_coords.shape[-1])))
         des_full_child_coords = torch.gather(des_full_child_coords, dim=1, index=perm2[:, :, None].repeat((1, 1, des_full_child_coords.shape[-1])))

@@ -3,7 +3,7 @@ experiment:
     logdir: rpdiff
     resume_iter: 0
     resume: False
-    batch_size: 16
+    batch_size: 4
     num_iterations: 100000
     val_interval: 1000
     save_interval: 5000
@@ -28,7 +28,7 @@ experiment:
 
 data:
     dataset_path: null  # set me to specify dataset folder
-    data_root: task_demos # task_demos/demo_aug
+    data_root: intermediate # task_demos/demo_aug
     split: train
     chunked: True
     load_into_memory: True

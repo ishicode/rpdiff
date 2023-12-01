@@ -367,7 +367,7 @@ def multistep_regression_scene_combine_sc(
 
     if np.max(parent_pcd_obb.extents) > scene_scale and False:
         print("here with broken (large) parent oriented bounding box")
-        from IPython import embed; embed()
+        ### from IPython import embed; embed()
         parent_pcd_mean = np.mean(parent_pcd, axis=0)
         parent_pcd_close = parent_pcd[np.where(np.linalg.norm(parent_pcd - parent_pcd_mean, axis=-1) < 0.2)[0]]
         parent_pcd_obb = trimesh.PointCloud(parent_pcd_close).bounding_box_oriented
@@ -457,7 +457,7 @@ def multistep_regression_scene_combine_sc(
         child_bb = trimesh.PointCloud(child_pcd_scaled).bounding_box.to_mesh()
     except Exception as e:
         print(f'[Getting bounding box for child pcd] Exception: {e}')
-        from IPython import embed; embed()
+        ### from IPython import embed; embed()
         print(f'Returning identity to exit out')
         return np.eye(4)
     # max_length = np.max(child_bb.extents) / 2
@@ -1244,7 +1244,7 @@ def multistep_regression_scene_combine_sc(
         ex_data_dict.opt_iter_data = opt_iter_data
         np.savez(osp.join(export_dir, 'export_data.npz'), **dict(ex_data_dict))
 
-        from IPython import embed; embed()
+        ### from IPython import embed; embed()
 
     ###############################################################
     # Filter out redundant final predictions
@@ -1431,7 +1431,7 @@ def multistep_regression_scene_combine_sc(
             out_tf = np.matmul(tmat_full_list[rand_tf_idx], tf_cent)
 
     # print('here done with inf (multistep)')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     # if compute_coverage_scores:
     if util.exists_and_true(kwargs, 'compute_coverage_scores'):

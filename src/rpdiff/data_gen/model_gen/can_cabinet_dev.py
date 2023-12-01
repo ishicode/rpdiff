@@ -406,7 +406,7 @@ def make_can_cabinet(bl, bw, bt, n_shelves, n_cans_per_shelf_max,
     util.meshcat_trimesh_show(mc_vis, f'scene/make_can_cab/full_can_cabinet', full_can_and_cabinet_mesh, opacity=1.0)
 
     # print('here with full')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     # base (single can) dev
     if False:
@@ -466,4 +466,4 @@ if __name__ == "__main__":
         show=True, mc_vis=mc_vis)
 
     full_canshelf_mesh.show()
-    from IPython import embed; embed()
+    ### from IPython import embed; embed()

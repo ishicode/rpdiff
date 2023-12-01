@@ -316,7 +316,7 @@ def coarse_aff_to_coarse_aff(
     child_final_mean = torch.mean(coarse_aff_gt['child_final_pcd'], 1).float().cuda()
     
     # print('here in pred util')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
     # get parent crop if needed
     if args.data.coarse_aff.c2f.parent_crop:
 
@@ -356,7 +356,7 @@ def coarse_aff_to_coarse_aff(
         # else:
             print(f'[C2C pred util] Exception: {e}')
             print('here')
-            from IPython import embed; embed()
+            ### from IPython import embed; embed()
 
             parent_pcd_cropped = fps_downsample(parent_pcd_to_crop, n_child_pts)
             # parent_pcd_cropped = parent_pcd_to_crop
@@ -440,7 +440,7 @@ def coarse_aff_to_coarse_aff(
         )
 
         # print('here with voxel coord in pred_util c2c') 
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
 
     new_small_rotmat = torch.bmm(coarse_aff_gt['rot_mat'], torch.inverse(out_rot_mat.detach().clone()))
     new_rotmat_grid_index = get_rotation_grid_index_torch(new_small_rotmat, rot_grid)

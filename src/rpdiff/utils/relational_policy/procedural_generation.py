@@ -240,7 +240,7 @@ class ProcGenRelations:
                     util.meshcat_trimesh_show(self.mc_vis, 'scene/child_coll_cent', p_sph, color=(0, 255, 255))
 
             # print('here in main, after getting relative_trans and checking collision')
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
             
             if nc_pts > 1 or np_pts > 1:
                 cd_max, pd_max = 0.0, 0.0
@@ -306,11 +306,11 @@ class ProcGenRelations:
         except IndexError as e:
             print(f'IndexError: {e}')
             print("here in infer mug_on_rack_multi")
-            from IPython import embed; embed()
+            ### from IPython import embed; embed()
 
         parent_mesh_all = three_util.trimesh_combine(parent_mesh_list, [util.matrix_from_list(pose) for pose in parent_pose_list], parent_scale_list)
     
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
         parent_pose_mat = util.matrix_from_pose(util.list2pose_stamped(parent_pose))
         child_pose_mat = util.matrix_from_pose(util.list2pose_stamped(child_pose))
         parent_tmesh_origin = trimesh.load(parent_mesh).apply_scale(parent_scale)
@@ -377,7 +377,7 @@ class ProcGenRelations:
         except Exception as e:
             print(f'Exception after failing to run kmeans: {e}')
             # print("here after failing to run kmeans")
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
 
             rel_trans = np.eye(4)
 
@@ -461,7 +461,7 @@ class ProcGenRelations:
             except Exception as e:
                 print(e)
                 print('here with error in mug_on_rack_multi proc gen (knn)')
-                from IPython import embed; embed()
+                ### from IPython import embed; embed()
 
             # vector in the xy plane that it points
             peg_xy_vecs[peg_idx] = tip_vec / np.linalg.norm(tip_vec)
@@ -528,7 +528,7 @@ class ProcGenRelations:
         except Exception as e:
             print(e)
             print("here in multi mug on rack, failed to build final_mug_pose")
-            from IPython import embed; embed()
+            ### from IPython import embed; embed()
 
         final_mug_pose_mat = util.matrix_from_pose(final_mug_pose)
 
@@ -588,7 +588,7 @@ class ProcGenRelations:
                 print("Intermediate frame: ", i)
                 util.meshcat_frame_show(self.mc_vis, f'scene/intermediate_frame/{i}', frame)
                 util.meshcat_trimesh_show(self.mc_vis, f'scene/intermediate_meshes/{i}', intermediate_meshes[i])
-            from IPython import embed; embed()
+            ### from IPython import embed; embed()
             self.mc_vis['scene/intermediate_frame'].delete()
             self.mc_vis['scene/intermediate_meshes'].delete()
 
@@ -692,7 +692,7 @@ class ProcGenRelations:
                     i = 0
 
                 # print('here in main, after getting relative_trans and checking collision')
-                # from IPython import embed; embed()
+                # ### from IPython import embed; embed()
                 
                 if nc_pts > 1 or np_pts > 1:
                     cd_max, pd_max = 0.0, 0.0
@@ -806,7 +806,7 @@ class ProcGenRelations:
 
             util.meshcat_trimesh_show(self.mc_vis, 'scene/final_bowl', final_bowl_mesh)
 
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
 
         out_dict = {}
         out_dict['rel_trans'] = rel_trans
@@ -919,7 +919,7 @@ class ProcGenRelations:
             util.meshcat_trimesh_show(self.mc_vis, 'scene/corner_place_pt', place_sph, color=(255, 0, 255), opacity=0.8)
             # util.meshcat_trimesh_show(self.mc_vis, 'scene/final_bottle', final_bottle_mesh)
 
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
 
         out_dict = {}
         out_dict['rel_trans'] = rel_trans
@@ -1061,7 +1061,7 @@ class ProcGenRelations:
                         c_sph = trimesh.creation.uv_sphere(0.005).apply_translation(c_cent)
                         util.meshcat_trimesh_show(self.mc_vis, 'scene/child_coll_cent', c_sph, color=(0, 255, 0))
                         # print('pts in coll')
-                        # from IPython import embed; embed()
+                        # ### from IPython import embed; embed()
                 
                 if nc_pts == 0:
                     feasible_book = True
@@ -1258,7 +1258,7 @@ class ProcGenRelations:
                         util.meshcat_trimesh_show(self.mc_vis, 'scene/child_coll_cent', c_sph, color=(0, 255, 0))
                         util.meshcat_trimesh_show(self.mc_vis, 'scene/parenet_mesh_final', parent_mesh_final, color=(255, 0, 0))
                         # print('pts in coll')
-                        # from IPython import embed; embed()
+                        # ### from IPython import embed; embed()
                 
                 if nc_pts == 0:
                     feasible_can = True

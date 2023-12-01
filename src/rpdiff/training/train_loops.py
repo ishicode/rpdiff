@@ -266,7 +266,7 @@ def train_iter_coarse_aff(
             size=MC_SIZE*1.5
         )
 
-        from IPython import embed; embed()
+        ### from IPython import embed; embed()
 
     #######################################################################
     # Combine model outputs and compute loss
@@ -568,7 +568,7 @@ def train_iter_refine_pose(
             (0, 0, 0), 
             f'{mc_iter_name}/ground_truth/parent_final_pcd', 
             size=MC_SIZE)
-        from IPython import embed; embed()
+        ### from IPython import embed; embed()
 
     if args.experiment.train.predict_offset:
         # update mean for pose refine model input offset prediction
@@ -605,7 +605,7 @@ def train_iter_refine_pose(
                 f'{mc_iter_name}/ground_truth/offset_pos', 
                 size=MC_SIZE*10)
 
-            from IPython import embed; embed()
+            ### from IPython import embed; embed()
 
     #######################################################################
     # Combine model outputs and compute loss
@@ -792,7 +792,7 @@ def train_iter_success(
     if args.debug:
         for jj in range(bs):
             print(f'Success model input: {jj}, Pred Success: {torch.sigmoid(success_model_output["success"][jj]).item()}, GT Sucess: {success_gt["success"][jj].item()}')
-        from IPython import embed; embed()
+        ### from IPython import embed; embed()
 
     #######################################################################
     # Combine model outputs and compute loss

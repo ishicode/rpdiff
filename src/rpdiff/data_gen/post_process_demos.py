@@ -114,7 +114,7 @@ def make_chunked_data(datadir, avg_mb_per_file=10):
     for i, fn in enumerate(fnames_new):
         if osp.exists(fn):
             chunked_data = np.load(fn, allow_pickle=True)
-            from IPython import embed; embed()
+            ### from IPython import embed; embed()
             assert False
 
         # fetch the current files we want to chunk

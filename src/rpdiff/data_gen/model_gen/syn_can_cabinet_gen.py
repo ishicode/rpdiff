@@ -166,9 +166,9 @@ def main_mp(args, cfg):
         util.meshcat_trimesh_show(mc_vis, f'scene/new_can', cl, color=(255, 0, 0), opacity=1.0)
 
         # print("here with can/cabinet")
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
 
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
         mc_vis['scene/make_can_cab'].delete()
 
 

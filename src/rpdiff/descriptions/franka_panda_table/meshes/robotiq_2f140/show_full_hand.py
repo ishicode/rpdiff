@@ -5,4 +5,4 @@ hand = Robotiq2F140Hand()
 
 hand.meshcat_show(mc_vis, 'scene/debug/full_hand')
 
-from IPython import embed; embed()
+### from IPython import embed; embed()

@@ -185,7 +185,7 @@ def single_shot_regression_feat_combine(mc_vis, parent_pcd, child_pcd, feat_mode
     # get output for translation, and combine outputs with rotation prediction
     model_output = policy_model(policy_mi)
     # print("here after model_output")
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     ##############################################
 
@@ -239,7 +239,7 @@ def single_shot_regression_feat_combine(mc_vis, parent_pcd, child_pcd, feat_mode
             same_pts_dict = {}
             for i, pt_pair_idx in enumerate(pt_pair_idxs):
 
-                # from IPython import embed; embed()
+                # ### from IPython import embed; embed()
                 try:
                     val_ind = pt_pair_idx[0]
                     val_ind_2d = topk_2d_inds[val_ind].squeeze()
@@ -248,7 +248,7 @@ def single_shot_regression_feat_combine(mc_vis, parent_pcd, child_pcd, feat_mode
                     ix1, ix2 = pt_pair_idx[1]
                 except Exception as e:
                     print(e)
-                    from IPython import embed; embed()
+                    ### from IPython import embed; embed()
 
                 try:
                     if ix1 not in same_pts_dict.keys():
@@ -263,7 +263,7 @@ def single_shot_regression_feat_combine(mc_vis, parent_pcd, child_pcd, feat_mode
                     same_pts_dict[ix2].append((ix1, ix2, attn_score))
                 except Exception as e:
                     print(e)
-                    from IPython import embed; embed()
+                    ### from IPython import embed; embed()
             
             # rank these by which have the most points
             num_matches = []
@@ -339,7 +339,7 @@ def single_shot_regression_feat_combine(mc_vis, parent_pcd, child_pcd, feat_mode
                 sph_list.append(sph)
 
 
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
 
 
             # mc_vis['scene/impt_pts'].delete()
@@ -367,7 +367,7 @@ def single_shot_regression_feat_combine(mc_vis, parent_pcd, child_pcd, feat_mode
             #         print('score: ', score)
 
 
-            from IPython import embed; embed()
+            ### from IPython import embed; embed()
 
     ##############################################
     model_output['quat'] = rot_model_output['quat']
@@ -388,7 +388,7 @@ def single_shot_regression_feat_combine(mc_vis, parent_pcd, child_pcd, feat_mode
 
     # util.meshcat_pcd_show(mc_vis, parent_pcd, (255, 0, 0), 'scene/real/parent_pts')
     # util.meshcat_pcd_show(mc_vis, child_pcd, (0, 0, 255), 'scene/real/child_pts')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     return out_tf
 
@@ -428,7 +428,7 @@ def iterative_regression_feat_combine(
 
         out_tf_full = np.matmul(out_tf, out_tf_full)
 
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
     if return_all_child_pcds:
         return out_tf_full, current_child_pcd
     else:
@@ -540,7 +540,7 @@ def single_shot_regression_scene_combine_sc(mc_vis, parent_pcd, child_pcd, scene
         
         if parent_crop_pcd.shape[0] == 0:
             print('!! Parent crop had zero points !!')
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
             rix2 = torch.randperm(pscene_pcd_t.shape[0])
             parent_cropped_pcds[i] = pscene_pcd_t[rix2[:N_crop]]
             
@@ -635,7 +635,7 @@ def single_shot_regression_scene_combine_sc(mc_vis, parent_pcd, child_pcd, scene
     # reshape into batch, pass into success classifier?
 
 #     print('here with rot_model_output_raw (success classifier)')
-#     from IPython import embed; embed()
+#     ### from IPython import embed; embed()
 
     # have batch of rotated child point clouds, get translation output prediction (maybe in a loop for batch size)
     post_rot_batch = N_queries * M
@@ -700,7 +700,7 @@ def single_shot_regression_scene_combine_sc(mc_vis, parent_pcd, child_pcd, scene
     policy_mi['child_start_pcd_mean'] = child_pcd_to_sc_mean
 
     # print('here ready to pass to success classifier')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
     # from pdb import set_trace; set_trace()
 
     # break into smaller batches
@@ -781,7 +781,7 @@ def single_shot_regression_scene_combine_sc(mc_vis, parent_pcd, child_pcd, scene
     #         util.meshcat_trimesh_show(mc_vis, f'scene/out_trans_sph_{jj}', sph, (0, 0, 255))
     #     print(e)
     #     print('Failed to get valid trans index')
-    #     from IPython import embed; embed()
+    #     ### from IPython import embed; embed()
 
     tf_cent = np.eye(4); tf_cent[:-1, -1] = -1.0 * np.mean(child_pcd_original, axis=0)
     if not len(valid_trans_idx):
@@ -845,7 +845,7 @@ def iterative_regression_scene_combine_sc(
 
         out_tf_full = np.matmul(out_tf, out_tf_full)
 
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
     if return_all_child_pcds:
         return out_tf_full, current_child_pcd
     else:
@@ -978,7 +978,7 @@ def multistep_regression_scene_combine_sc(
             
             if parent_crop_pcd.shape[0] == 0:
                 print('!! Parent crop had zero points !!')
-                # from IPython import embed; embed()
+                # ### from IPython import embed; embed()
                 rix2 = torch.randperm(pscene_pcd_t.shape[0])
                 parent_cropped_pcds[i] = pscene_pcd_t[rix2[:N_crop]]
                 continue
@@ -1067,7 +1067,7 @@ def multistep_regression_scene_combine_sc(
     # visualize policy model input, directly before passing into rotation 
 
     # print('here before rot model')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
     rot_debug_idx = 0
     offset = np.array([1.0, 0, 0])
     ppcd_viz = policy_mi['parent_start_pcd'][rot_debug_idx].detach().cpu().numpy()
@@ -1101,7 +1101,7 @@ def multistep_regression_scene_combine_sc(
     # reshape into batch, pass into success classifier?
 
 #     print('here with rot_model_output_raw (success classifier)')
-#     from IPython import embed; embed()
+#     ### from IPython import embed; embed()
 
     # have batch of rotated child point clouds, get translation output prediction (maybe in a loop for batch size)
     post_rot_batch = N_queries * M
@@ -1185,7 +1185,7 @@ def multistep_regression_scene_combine_sc(
 
 
     # print('here before refine')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     # base_debug_idx = rot_debug_idx*(N_queries**2) 
     # for j in range(4):
@@ -1204,7 +1204,7 @@ def multistep_regression_scene_combine_sc(
 
     # print('here ready for refinement')
     # # from pdb import set_trace; set_trace()
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     # break into smaller batches
     sm_bs = 8
@@ -1233,7 +1233,7 @@ def multistep_regression_scene_combine_sc(
     #     
     #     if parent_crop_pcd.shape[0] == 0:
     #         print('!! Parent crop had zero points !!')
-    #         # from IPython import embed; embed()
+    #         # ### from IPython import embed; embed()
     #         rix2 = torch.randperm(pscene_pcd_t.shape[0])
     #         parent_cropped_pcds[i] = pscene_pcd_t[rix2[:N_crop]]
     #         continue
@@ -1290,7 +1290,7 @@ def multistep_regression_scene_combine_sc(
 
                 # re-crop for this mini-batch
                 # print('here before new crop')
-                # from IPython import embed; embed()
+                # ### from IPython import embed; embed()
                 if no_parent_crop:
                     pass
                 else:
@@ -1309,7 +1309,7 @@ def multistep_regression_scene_combine_sc(
 
                         if parent_crop_pcd.shape[0] == 0:
                             print('!! Parent crop had zero points !!')
-                            # from IPython import embed; embed()
+                            # ### from IPython import embed; embed()
                             rix2 = torch.randperm(pscene_pcd_t.shape[0])
                             parent_crop_sb[jj] = pscene_pcd_t[rix2[:N_crop]]
                             continue
@@ -1355,7 +1355,7 @@ def multistep_regression_scene_combine_sc(
                 #         util.meshcat_pcd_show(mc_vis, pcd_show_cent, (0, 0, 255), f'scene/refine/sm_bs_cent_{jj}')
                 #     
                 #     print('showing refine child pcds')
-                #     from IPython import embed; embed()
+                #     ### from IPython import embed; embed()
 
                 child_local_latent = feat_model_c.extract_local_latent(small_child_rpdiff_mi, new=True).detach()
                 child_global_latent = feat_model_c.extract_global_latent(small_child_rpdiff_mi).detach()
@@ -1398,7 +1398,7 @@ def multistep_regression_scene_combine_sc(
                 small_policy_mi['child_start_pcd'] = child_pcd_rot
                 
                 # get output for translation, and combine outputs with rotation prediction
-                # from IPython import embed; embed()
+                # ### from IPython import embed; embed()
                 trans_model_output_raw = policy_model_refine(small_policy_mi)
                 # if ii < 3:
                 #     trans_model_output_raw = policy_model(small_policy_mi)
@@ -1466,7 +1466,7 @@ def multistep_regression_scene_combine_sc(
     success_out_all = torch.Tensor(success_out_list).float().cuda()
 
     # print('here in multistep regression + voxel + success')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     # pass into success classifier (have to loop to reduce batch size)
     # success_model_output = success_model(policy_mi)
@@ -1505,7 +1505,7 @@ def multistep_regression_scene_combine_sc(
     #         util.meshcat_trimesh_show(mc_vis, f'scene/infer/success_topk_box/child_pts_box_{ii}', box, color)
 
     #     print('Here after full refine (showing)')
-    #     from IPython import embed; embed()
+    #     ### from IPython import embed; embed()
 
     #     mc_vis['scene/infer/success_topk'].delete()
     #     mc_vis['scene/infer/success_topk_box'].delete()
@@ -1550,7 +1550,7 @@ def multistep_regression_scene_combine_sc(
         # util.meshcat_pcd_show(mc_vis, trans_child_pcd, (255, 0, 255), f'scene/infer/success_topk/child_pts_tf_{ii}')
 
     # print('Here after viz refine')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     # if viz:
     #     # colormap for the top-k
@@ -1583,7 +1583,7 @@ def multistep_regression_scene_combine_sc(
     # util.meshcat_pcd_show(mc_vis, child_pcd, (0, 0, 255), 'scene/real/child_pts')
 
     # print('here before returning multistep regression')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     return out_tf
 
@@ -1709,7 +1709,7 @@ def single_shot_regression_scene_combine(mc_vis, parent_pcd, child_pcd, scene_mo
     policy_mi['child_global_latent'] = child_global_latent
 
     # print("here before_policy")
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     # get rotation output prediction
     rot_model_output_raw = rot_policy_model(policy_mi)
@@ -1744,7 +1744,7 @@ def single_shot_regression_scene_combine(mc_vis, parent_pcd, child_pcd, scene_mo
     child_pcd_rot = child_pcd_final_pred.detach()
 
     # print("here after rot")
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
     
     # reencode this rotated point cloud to get new descriptor features
     child_rpdiff_mi['point_cloud'] = child_pcd_rot
@@ -1777,7 +1777,7 @@ def single_shot_regression_scene_combine(mc_vis, parent_pcd, child_pcd, scene_mo
 
 
     # print("here after model_output")
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
     if viz:
         util.meshcat_pcd_show(mc_vis, parent_pcd, (255, 0, 0), 'scene/infer/parent_pcd')
         util.meshcat_pcd_show(mc_vis, child_pcd_original, (0, 0, 255), 'scene/infer/child_pcd')
@@ -1842,7 +1842,7 @@ def single_shot_regression_scene_combine(mc_vis, parent_pcd, child_pcd, scene_mo
             same_pts_dict = {}
             for i, pt_pair_idx in enumerate(pt_pair_idxs):
 
-                # from IPython import embed; embed()
+                # ### from IPython import embed; embed()
                 try:
                     val_ind = pt_pair_idx[0]
                     val_ind_2d = topk_2d_inds[val_ind].squeeze()
@@ -1851,7 +1851,7 @@ def single_shot_regression_scene_combine(mc_vis, parent_pcd, child_pcd, scene_mo
                     ix1, ix2 = pt_pair_idx[1]
                 except Exception as e:
                     print(e)
-                    from IPython import embed; embed()
+                    ### from IPython import embed; embed()
 
                 try:
                     if ix1 not in same_pts_dict.keys():
@@ -1866,7 +1866,7 @@ def single_shot_regression_scene_combine(mc_vis, parent_pcd, child_pcd, scene_mo
                     same_pts_dict[ix2].append((ix1, ix2, attn_score))
                 except Exception as e:
                     print(e)
-                    from IPython import embed; embed()
+                    ### from IPython import embed; embed()
             
             # rank these by which have the most points
             num_matches = []
@@ -1942,7 +1942,7 @@ def single_shot_regression_scene_combine(mc_vis, parent_pcd, child_pcd, scene_mo
                 sph_list.append(sph)
 
 
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
 
 
             # mc_vis['scene/impt_pts'].delete()
@@ -1970,7 +1970,7 @@ def single_shot_regression_scene_combine(mc_vis, parent_pcd, child_pcd, scene_mo
             #         print('score: ', score)
 
 
-            from IPython import embed; embed()
+            ### from IPython import embed; embed()
 
     ##############################################
     model_output['rot_mat'] = rot_model_output['rot_mat']
@@ -1990,7 +1990,7 @@ def single_shot_regression_scene_combine(mc_vis, parent_pcd, child_pcd, scene_mo
 
     # util.meshcat_pcd_show(mc_vis, parent_pcd, (255, 0, 0), 'scene/real/parent_pts')
     # util.meshcat_pcd_show(mc_vis, child_pcd, (0, 0, 255), 'scene/real/child_pts')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     return out_tf
 
@@ -2035,7 +2035,7 @@ def iterative_regression_scene_combine(
 
         out_tf_full = np.matmul(out_tf, out_tf_full)
 
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
     if return_all_child_pcds:
         return out_tf_full, current_child_pcd
     else:
@@ -2133,7 +2133,7 @@ def single_shot_regression_transformer_combine(mc_vis, parent_pcd, child_pcd, rp
     # get output from transformer for translation, and combine outputs with rotation prediction
     model_output = policy_model(policy_mi)
     # print("here after model_output")
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     ##############################################
 
@@ -2179,7 +2179,7 @@ def single_shot_regression_transformer_combine(mc_vis, parent_pcd, child_pcd, rp
             same_pts_dict = {}
             for i, pt_pair_idx in enumerate(pt_pair_idxs):
 
-                # from IPython import embed; embed()
+                # ### from IPython import embed; embed()
                 try:
                     val_ind = pt_pair_idx[0]
                     val_ind_2d = topk_2d_inds[val_ind].squeeze()
@@ -2188,7 +2188,7 @@ def single_shot_regression_transformer_combine(mc_vis, parent_pcd, child_pcd, rp
                     ix1, ix2 = pt_pair_idx[1]
                 except Exception as e:
                     print(e)
-                    from IPython import embed; embed()
+                    ### from IPython import embed; embed()
 
                 try:
                     if ix1 not in same_pts_dict.keys():
@@ -2203,7 +2203,7 @@ def single_shot_regression_transformer_combine(mc_vis, parent_pcd, child_pcd, rp
                     same_pts_dict[ix2].append((ix1, ix2, attn_score))
                 except Exception as e:
                     print(e)
-                    from IPython import embed; embed()
+                    ### from IPython import embed; embed()
             
             # rank these by which have the most points
             num_matches = []
@@ -2277,7 +2277,7 @@ def single_shot_regression_transformer_combine(mc_vis, parent_pcd, child_pcd, rp
                 sph_list.append(sph)
 
 
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
 
 
             # mc_vis['scene/impt_pts'].delete()
@@ -2305,7 +2305,7 @@ def single_shot_regression_transformer_combine(mc_vis, parent_pcd, child_pcd, rp
             #         print('score: ', score)
 
 
-            from IPython import embed; embed()
+            ### from IPython import embed; embed()
 
     ##############################################
     model_output['quat'] = rot_model_output['quat']

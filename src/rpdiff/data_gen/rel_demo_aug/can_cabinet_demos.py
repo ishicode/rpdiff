@@ -450,7 +450,7 @@ def main(args):
         new_parent_scale = None
         # check if bottle/container are the right sizes
         if parent_class == 'box_container' and child_class == 'bottle':
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
             container_mesh = trimesh.load(parent_obj_file_dec)
             bottle_mesh = trimesh.load(child_obj_file_dec)
             container_mesh.apply_scale(pc_master_dict['parent']['scale_default'])
@@ -496,7 +496,7 @@ def main(args):
             log_info(ext_str)
 
             # check the 2D extents
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
         current_scene_concat_mesh = None
         for pc in pcl:
             pc_master_dict[pc]['mesh_file'] = parent_obj_file if pc == 'parent' else child_obj_file
@@ -918,7 +918,7 @@ def main(args):
         eval_img_fname = osp.join(eval_imgs_dir, f'{iteration}.png')
         util.np2img(eval_rgb.astype(np.uint8), eval_img_fname)
         
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
 
         ##########################################################################
         # upside down check for too much inter-penetration

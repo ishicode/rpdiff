@@ -747,7 +747,7 @@ def main(args):
 
         final_child_pose_mat = np.matmul(relative_trans, start_child_pose_mat)
 
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
         time.sleep(0.1)
 
         pb_client.set_step_sim(True)
@@ -802,7 +802,7 @@ def main(args):
         obj_surf_contacts = p.getContactPoints(child_obj_id, place_parent_obj_id, -1, -1)
         touching_surf = len(obj_surf_contacts) > 0
         success_crit_dict['touching_surf'] = touching_surf
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
         if parent_class == 'box_container' and child_class == 'bottle':
             bottle_final_pose = np.concatenate(p.getBasePositionAndOrientation(child_obj_id)[:2]).tolist()
 
@@ -822,7 +822,7 @@ def main(args):
 
             # bottle_upright = upright_ori_diff < args.upright_ori_diff_thresh
             
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
 
         # take an image to make sure it's good
         eval_rgb = eval_cam.get_images(get_rgb=True)[0]

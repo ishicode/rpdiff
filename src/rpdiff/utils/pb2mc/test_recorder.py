@@ -69,5 +69,5 @@ while True:
     recorder.update_meshcat_current_state(vis)
     time.sleep(0.01)
 
-from IPython import embed; embed()
+### from IPython import embed; embed()
 

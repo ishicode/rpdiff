@@ -86,7 +86,7 @@ class FullRelationPointcloudPolicyDataset(Dataset):
 
         if not len(self.files):
             print("here with no files")
-            from IPython import embed; embed()
+            ### from IPython import embed; embed()
        
         self.data_chunks = None
         self.data = None
@@ -408,7 +408,13 @@ class FullRelationPointcloudPolicyDataset(Dataset):
         # get the start and final point clouds (used by all)
         parent_final_pcd_raw = data['multi_obj_final_pcd'].item()['parent']
         child_final_pcd_raw = data['multi_obj_final_pcd'].item()['child']
-        intermediate_pcds_raw = data['intermediate_pcds']
+        try:
+            intermediate_pcds_raw = data['intermediate_pcds']
+        except:
+            print(f'[Data Loader] Exception: intermediate_pcds not in data')
+            self.not_success_idx.append(index)
+            # return self.get_item(np.random.randint(len(self.files)))
+            return self.get_item(np.random.randint(len(self.data)))
 
         # Load "full" point clouds instead of camera point clouds
         if self.load_full_pcd:
@@ -432,9 +438,10 @@ class FullRelationPointcloudPolicyDataset(Dataset):
         try:
             parent_final_pcd, child_final_pcd = self.process_general_start_final_pcd(data, parent_final_pcd_raw, child_final_pcd_raw)
             #processing the intermediate raw pcd
-            intermediate_final_pcds = np.array([])
+            intermediate_final_pcds = np.zeros((1,5000,3))
             for inter_pcd in intermediate_pcds_raw:
-                intermediate_final_pcds.append(train_util.check_enough_points(inter_pcd, self.shape_pcd_n))
+                intermediate_final_pcds = np.concatenate((intermediate_final_pcds, train_util.check_enough_points(inter_pcd, self.shape_pcd_n).reshape(1, 5000, 3)), axis = 0)
+            intermediate_final_pcds = intermediate_final_pcds[1:]
 
         except ValueError as e:
             print(f'[Data Loader] Exception: {e}')
@@ -477,7 +484,7 @@ class FullRelationPointcloudPolicyDataset(Dataset):
             print(f'[Data Loader] Invalid sample (index: {index})')
             if embed_invalid:
                 print('Here with valid_sample False')
-                from IPython import embed; embed()
+                ### from IPython import embed; embed()
             # self.not_success_idx.append(index)
             return self.get_item(np.random.randint(len(self.data)))
 
@@ -697,7 +704,7 @@ class FullRelationPointcloudPolicyDataset(Dataset):
 
         if self.debug_viz:
             # print('here to get rotation_grid_index')
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
             # from pdb import set_trace; set_trace()
             # from rpdiff.utils.fork_pdb import ForkablePdb; ForkablePdb().set_trace()
 
@@ -1268,7 +1275,7 @@ class FullRelationPointcloudPolicyDataset(Dataset):
         if self.debug_viz:
             # new
             # print("here in get_diff_pose_input_gt")
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
             # parent_final_pcd = o3d_fps(parent_final_pcd, int(parent_final_pcd.shape[0]/10))
             # child_final_pcd = o3d_fps(child_final_pcd, int(child_final_pcd.shape[0]/6))
 
@@ -1637,9 +1644,8 @@ class FullRelationPointcloudPolicyDataset(Dataset):
 
             trans_offset = offset_axis_post_rot
             pose_gt['trans_offset'] = trans_offset
-        
+       
         for inter_idx, inter_pcd in enumerate(intermediate_final_pcds):
-            
             indiv_perturb_pose_list_inter = []
             indiv_full_perturb_pose_list_inter = []
             cumul_perturb_pose_list_inter = []
@@ -1654,7 +1660,7 @@ class FullRelationPointcloudPolicyDataset(Dataset):
             inter_pcd_so_far = inter_pcd.copy()
             # Similar diffusion trajectory generation as for parents and child
         
-            if self.data_args.refine_pose.interp_diffusion_traj_intermediate:
+            if self.data_args.refine_pose.interp_diffusion_traj:
                 # Sample large perturbation and interpolate positions and rotations
                 random_large_rot_inter = self.rot_grid[np.random.randint(self.rot_grid.shape[0])]
                 #fix output order
@@ -1665,7 +1671,7 @@ class FullRelationPointcloudPolicyDataset(Dataset):
                 inter_trans_interp = np.linspace(np.zeros(3), inter_trans_pert, inter_diff_steps + 1)
 
                 # Interpolate the rotations
-                slerp_inter = Slerp(np.arange(2), R.from_euler('xyz', [0, 0, 0]).as_quat(), use_shortest=True)
+                slerp_inter = Slerp(np.arange(2), R.from_quat([np.array([0, 0, 0, 1]), inter_quat_pert]))
                 interp_rots_inter = slerp_inter(np.linspace(0, 1, inter_diff_steps + 1))
                 inter_rotmat_interp = interp_rots_inter.as_matrix()
                 
@@ -1687,7 +1693,6 @@ class FullRelationPointcloudPolicyDataset(Dataset):
                     indiv_perturb_pose_list_inter.append(tf_this_step_inter_raw)
                     cumul_perturb_pose_list_inter.append(tf_so_far_inter)
                     # Transform intermediate point cloud
-                    from IPython import embed; embed()
                     tf_this_step_full_raw_inter = np.eye(4); tf_this_step_full_raw_inter[:-1, :-1] = inter_rotmat_interp[d_idx_inter]; tf_this_step_full_raw_inter[:-1, -1] = inter_trans_interp[d_idx_inter]
                     tf_this_step_full_inter = util.form_tf_mat_cent_pcd_rot(tf_this_step_full_raw, inter_pcd)
                     indiv_full_perturb_pose_list_inter.append(tf_this_step_full_raw)

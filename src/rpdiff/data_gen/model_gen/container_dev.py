@@ -141,4 +141,4 @@ if __name__ == "__main__":
 
     full_container_mesh, container_part_mesh_dict = make_container(bl=bl, bw=bw, bt=bt, wt=wt, wh=wh, th=th, show=False)
     full_container_mesh.show()
-    from IPython import embed; embed()
+    ### from IPython import embed; embed()

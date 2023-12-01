@@ -125,7 +125,7 @@ class SegmentationAugmentation:
             
             rectangle_mask = rectangle_mask & line_mask
             # print('here in rect mask')
-            # from IPython import embed; embed()
+            # ### from IPython import embed; embed()
         if outside:
             rectangle_mask = np.logical_not(rectangle_mask)
         return rectangle_mask

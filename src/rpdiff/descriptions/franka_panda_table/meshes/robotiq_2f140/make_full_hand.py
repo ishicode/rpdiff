@@ -49,5 +49,5 @@ mc_vis['scene'].delete()
 util.meshcat_trimesh_show(mc_vis, 'scene/full_hand', full_mesh)
 full_mesh.export('full_hand_2f140.obj')
 
-from IPython import embed; embed()
+### from IPython import embed; embed()
 

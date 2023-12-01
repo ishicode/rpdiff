@@ -124,7 +124,7 @@ def simulate_random_occlusions(pcd, cam_poses, cam_int_mat, img_size=(480, 640),
         depth_int = np.hstack([np.floor(depth[:, :2]), depth[:, 2].reshape(-1, 1)])
 
         # print('depth int', depth_int)
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
         final_depth = np.zeros((img_size[0], img_size[1]))
         
         yy, xx = np.meshgrid(np.arange(img_size[0]), np.arange(img_size[1]), indexing='ij')
@@ -159,7 +159,7 @@ def simulate_random_occlusions(pcd, cam_poses, cam_int_mat, img_size=(480, 640),
         # fig = plt.figure()
         # plt.imshow(final_depth)
         # fig.savefig('depth2.png')
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
         
         # add holes
         obj_mask_inds = np.where(final_depth.reshape(-1))[0]
@@ -211,7 +211,7 @@ def simulate_random_occlusions(pcd, cam_poses, cam_int_mat, img_size=(480, 640),
         # imwrite('seg_obj_fname_vis.png', obj_visible_mask)
         # imwrite('seg_aug_fname_vis.png', aug_visible_mask)
         # print('created depth from point cloud')
-        # from IPython import embed; embed() 
+        # ### from IPython import embed; embed() 
 
         # go back to 3D from this augmented depth map
         pcd_aug_cam = geometry_np.lift(pixel_coords[:, 1], pixel_coords[:, 0], final_depth.flatten(), cam_int_mat)
@@ -219,20 +219,20 @@ def simulate_random_occlusions(pcd, cam_poses, cam_int_mat, img_size=(480, 640),
         pcd_aug_world = util.transform_pcd(pcd_aug_cam, cam_pose_mat)
 
         # util.meshcat_pcd_show(mc_vis, pcd_aug_world, [0, 255, 0], f'scene/pcd_aug_world_{cam_idx}')
-        # from IPython import embed; embed()
+        # ### from IPython import embed; embed()
 
         pcds_aug.append(pcd_aug_world)
     
     pcd_aug = np.concatenate(pcds_aug, axis=0)
 
-    # # from IPython import embed; embed()
+    # # ### from IPython import embed; embed()
     # fig, ax = plt.subplots(2, 2)
     # ax[0, 0].imshow(depths[0])
     # ax[0, 1].imshow(depths[1])
     # ax[1, 0].imshow(depths[2])
     # ax[1, 1].imshow(depths[3])
     # fig.savefig('depth_all.png')
-    # # from IPython import embed; embed()
+    # # ### from IPython import embed; embed()
 
     # if pcd_aug.shape[0] < 1500:
     if pcd_aug.shape[0] < min_pts:
@@ -263,7 +263,7 @@ def simulate_cut_plane(pcd):
     # mc_vis['scene/keep_pts'].delete()
     # util.meshcat_pcd_show(mc_vis, keep_pts, name='scene/keep_pts')
     # util.meshcat_pcd_show(mc_vis, remove_pts, name='scene/remove_pts')
-    # from IPython import embed; embed()
+    # ### from IPython import embed; embed()
 
     if keep_pts.shape[0] > 1500:
         pcd = keep_pts
